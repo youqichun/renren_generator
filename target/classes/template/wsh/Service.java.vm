@@ -1,0 +1,11 @@
+package ${package}.wsh.service;
+
+import com.ztd.core.service.CrudService;
+import ${package}.wsh.entity.${className};
+import ${package}.wsh.mapper.${className}Mapper;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class ${className}Service extends CrudService<${className}Mapper,${className}> {
+}

@@ -1,0 +1,11 @@
+package ${package}.ecshop.service;
+
+import com.ztd.core.service.CrudService;
+import ${package}.ecshop.entity.${className};
+import ${package}.ecshop.mapper.${className}Mapper;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
+@Service
+@Transactional
+public class ${className}Service extends CrudService<${className}Mapper,${className}> {
+}

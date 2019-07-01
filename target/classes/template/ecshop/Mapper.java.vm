@@ -1,0 +1,9 @@
+package ${package}.ecshop.mapper;
+
+import com.ztd.core.persistence.BaseMapper;
+import com.ztd.core.persistence.annotation.MyBatisMapper;
+import ${package}.ecshop.entity.${className};
+
+@MyBatisMapper
+public interface ${className}Mapper extends BaseMapper<${className}>{
+}

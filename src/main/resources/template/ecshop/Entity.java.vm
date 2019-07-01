@@ -1,0 +1,46 @@
+/**
+ * 
+ */
+package ${package}.ecshop.entity;
+
+import com.ztd.core.persistence.DataEntity;
+
+/**
+ * 版本Entity
+ * @author hs
+ * @version 2017-8-22
+ */
+public class ${className} extends DataEntity<${className}> {
+
+private static final long serialVersionUID = 1L;
+
+#foreach ($column in $columns)
+
+
+    //$column.comments
+    private $column.attrType $column.attrname;
+
+
+
+#end
+
+#foreach ($column in $columns)
+
+
+	#if(${column.attrname} !=  'id' && ${column.attrname} != 'createBy' && ${column.attrname} != 'createByName'  && ${column.attrname} != 'updateBy' && ${column.attrname} != 'updateByName' && ${column.attrname} != 'updateDate' && ${column.attrname} != 'remarks' && ${column.attrname} != 'delFlag' && ${column.attrname} != 'ext1' && ${column.attrname} != 'ext2'&& ${column.attrname} != 'ext3')
+    /**
+     * 设置：${column.comments}
+     */
+    public void set${column.attrName}($column.attrType $column.attrname) {
+            this.$column.attrname = $column.attrname;
+            }
+    /**
+     * 获取：${column.comments}
+     */
+    public $column.attrType get${column.attrName}() {
+            return $column.attrname;
+            }
+	#end
+#end
+}
+

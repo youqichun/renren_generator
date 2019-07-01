@@ -1,0 +1,93 @@
+package ${package}.wsh.web;
+import com.ztd.common.json.AjaxJson;
+import com.ztd.core.persistence.Page;
+import com.ztd.core.web.BaseController;
+import ${package}.wsh.entity.${className};
+import ${package}.wsh.service.${className}Service;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+
+@Controller
+@RequestMapping(value = "${adminPath}/wsh/${classname}")
+public class ${className}Controller extends BaseController {
+
+    @Autowired
+    private ${className}Service ${classname}Service;
+
+    @RequiresPermissions("wsh:${classname}:list")
+    @RequestMapping(value = {"list", ""})
+    public String list() {
+        return "modules/wsh/${lcclassname}/${classname}List";
+    }
+
+    @ResponseBody
+    @RequiresPermissions("wsh:${classname}:list")
+    @RequestMapping(value = "data")
+    public Map<String, Object> data(${className} ${classname}, HttpServletRequest request, HttpServletResponse response) {
+        Page<${className}> page = ${classname}Service.findPage(new Page<${className}>(request, response), ${classname});
+        return super.getBootstrapData(page);
+    }
+
+    @RequiresPermissions(value={"wsh:${classname}:view","wsh:${classname}:add","wsh:${classname}:edit"},logical=Logical.OR)
+    @RequestMapping(value = "form")
+    public String form(${className} ${classname}, Model model) {
+
+        if(${classname}.getId()!=null){
+            ${classname} = ${classname}Service.get(${classname}.getId());
+        }
+
+        model.addAttribute("${classname}", ${classname});
+        return "modules/wsh/${lcclassname}/${classname}Form";
+    }
+
+    /**
+     * 保存版本成功
+     */
+    @ResponseBody
+    @RequiresPermissions(value = {"wsh:${classname}:add","wsh:${classname}:edit"},logical= Logical.OR)
+    @RequestMapping(value = "save")
+    public AjaxJson save(${className} ${classname},Model model) {
+        AjaxJson j = new AjaxJson();
+        String message = "保存版本成功";
+        if (!beanValidator(model, ${classname})){
+            j.setSuccess(false);
+            j.setMsg("非法参数！");
+            return j;
+        }
+            ${classname}Service.save(${classname});
+        j.setSuccess(true);
+        j.setMsg(message);
+        return j;
+    }
+
+    /**
+     * 批量删除
+     */
+    @ResponseBody
+    @RequiresPermissions("wsh:${classname}:del")
+    @RequestMapping(value = "delete")
+    public AjaxJson deleteAll(String ids) {
+        AjaxJson j = new AjaxJson();
+        String idArray[] =ids.split(",");
+        for(String id : idArray){
+                ${classname}Service.delete(${classname}Service.get(id));
+        }
+        j.setSuccess(true);
+        j.setMsg("删除版本成功！");
+        return j;
+    }
+
+
+
+
+
+
+}

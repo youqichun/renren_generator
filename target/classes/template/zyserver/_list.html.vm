@@ -1,0 +1,256 @@
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>H+ 后台主题UI框架 - 数据表格</title>
+    <meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="/hplus/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="/hplus/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+    <!-- Data Tables -->
+    <link href="/hplus/css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
+
+    <link href="/hplus/css/animate.css" rel="stylesheet">
+    <link href="/hplus/css/style.css?v=4.1.0" rel="stylesheet">
+
+    <link href="/hplus/css/plugins/switchery/switchery.css" rel="stylesheet">
+    <link href="/hplus/css/plugins/chosen/chosen.css" rel="stylesheet">
+    <link href="/hplus/css/plugins/cropper/cropper.min.css" rel="stylesheet">
+
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row row-lg">
+        <div class="col-sm-12">
+            <!-- Example Toolbar -->
+            <div class="example-wrap">
+                <h4 class="example-title">工具条</h4>
+                <div class="example">
+                    <div class="btn-group hidden-xs" id="exampleToolbar" role="group">
+                        <button type="button" class="btn btn-outline btn-default" onclick="toAdd${className}()">
+                            <i class="glyphicon glyphicon-plus"  aria-hidden="true"></i>
+                        </button>
+                      <!--  <button type="button" class="btn btn-outline btn-default">
+                            <i class="glyphicon glyphicon-heart" aria-hidden="true"></i>
+                        </button>-->
+                        <button type="button" onclick="delChecked${className}()"  class="btn btn-outline btn-default">
+                            <i class="glyphicon glyphicon-trash" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <table id="exampleTableToolbar" data-mobile-responsive="true">
+                        <thead>
+                        <tr>
+                        <th data-field="state" data-checkbox="true"></th>
+                        #foreach($column in $columns)
+                        #if($column.columnName != $pk.columnName)
+                        <th data-field="${column.attrname}">${column.comments}</th>
+                        #end
+                        #end
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+            <!-- End Example Toolbar -->
+        </div>
+    </div>
+</div>
+
+<!-- 全局js -->
+<script src="/hplus/js/jquery.min.js?v=2.1.4"></script>
+<script src="/hplus/js/bootstrap.min.js?v=3.3.6"></script>
+
+<!-- Bootstrap table -->
+<script src="/hplus/js/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="/hplus/js/plugins/bootstrap-table/bootstrap-table-mobile.min.js"></script>
+<script src="/hplus/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.min.js"></script>
+
+
+<script src="/hplus/js/content.min.js?v=1.0.0"></script>
+
+<script src="/hplus/js/plugins/layer/layer.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Page-Level Scripts -->
+<script type="text/javascript">
+
+    $exampleTableToolbar = $('#exampleTableToolbar'),
+
+    $(document).ready(function () {
+        $('#exampleTableToolbar').bootstrapTable({
+            url: "/${pathName}",
+            search: true,
+            sortable: true,      //是否启用排序
+            pagination: true,                   //是否显示分页（*）
+            processing: true,//载入数据的时候是否显示“载入中”
+            pageNumber:1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                       //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],  //可供选择的每页的行数（*）
+            ordering: false, //排序操作在服务端进行，所以可以关了。
+            queryParamsType:'', //默认值为 'limit' ,在默认情况下 传给服务端的参数为：offset,limit,sort
+            // 设置为 ''  在这种情况下传给服务器的参数为：pageSize,pageNumber
+            autoWidth: false,
+            sidePagination: "server", //服务端处理分页
+            showRefresh: true,
+            showToggle: true,
+            showColumns: true,
+            toolbar: '#exampleToolbar',
+            iconSize: 'outline',
+            icons: {
+                refresh: 'glyphicon-repeat',
+                toggle: 'glyphicon-list-alt',
+                columns: 'glyphicon-list'
+            },
+            sortName : '${classname}Id',
+            sortOrder : 'asc',
+            columns: [
+                {
+                field:'state'
+             },
+        #foreach($column in $columns)
+            #if($column.columnName != $pk.columnName)
+            {
+                field: '${column.attrname}',
+                title: '${column.comments}',
+                align: 'center',
+                sortable: true
+            },
+            #end
+        #end
+                {
+                field: 'ogration',
+                title: '操作',
+                align: 'center',
+                formatter:function(value,row,index){
+                    //通过formatter可以自定义列显示的内容
+                    //value：当前field的值，即id
+                    //row：当前行的数据
+                    var a = '<button type=\'button\' onclick=\'del${className}("'+row.${classname}Id+'")\' class=\'btn btn-danger\'>删除</button>&nbsp&nbsp' +
+                        '<button type=\'button\' onclick=\'toEdit${className}("'+row.${classname}Id+'")\' class=\'btn btn-success\'>修改</button>';
+                    return a;
+                }
+            }],
+           onCheckAll:function(rows){
+               console.log(rows);
+
+           },
+           onCheck:function(row){
+               console.log(row);
+
+           },
+           onUncheck:function(row){
+               console.log(row);
+
+           }
+       });
+
+
+
+    });
+
+
+    function del${className}(${classname}Id) {
+        console.log("${classname}Id:"+${classname}Id);
+
+        layer.confirm('是否删除该记录？', {
+            btn: ['是','否'] //按钮
+        }, function(){
+            layer.closeAll();
+            $.ajax({
+                url: '/${pathName}/'+${classname}Id,
+                type: 'DELETE',
+                success: function(result) {
+                    // Do something with the result
+                    refrechTable();
+
+                }
+            });
+        }, function(){
+
+        });
+
+    }
+
+    function delChecked${className}() {
+        var a= $exampleTableToolbar.bootstrapTable('getSelections');
+        console.log(a);
+        var ids = [];
+
+        for(var i=0;i<a.length;i++){
+
+             ids.push(a[i].${classname}Id);
+
+        }
+
+        ids = JSON.stringify(ids);
+
+
+        console.log(ids);
+        layer.confirm('是否删除这些记录？', {
+            btn: ['是','否'] //按钮
+        }, function(){
+            layer.closeAll();
+            $.ajax({
+                url: '/${pathName}/deleteByIds',
+                data:ids,
+                type: 'DELETE',
+                dataType:"JSON",
+                contentType: "application/json",
+                success: function(result) {
+                    // Do something with the result
+                    refrechTable();
+
+                }
+            });
+        }, function(){
+
+        });
+
+
+    }
+
+    function toEdit${className}(${classname}Id) {
+        layer.open({
+            type: 2,
+            title: '修改',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['25%', '55%'],
+            content: '/page/${pathName}/toEdit?${classname}Id='+${classname}Id //iframe的url
+        });
+
+    }
+    function toAdd${className}() {
+        layer.open({
+            type: 2,
+            title: '新增',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['25%', '55%'],
+            content: '/page/${pathName}/toAdd' //iframe的url
+        });
+
+    }
+
+    function refrechTable() {
+        $exampleTableToolbar.bootstrapTable('refresh');
+    }
+
+
+</script>
+
+
+
+</body>
+</html>

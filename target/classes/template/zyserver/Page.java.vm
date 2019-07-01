@@ -1,0 +1,37 @@
+package com.bjdd.controller.page;
+
+import com.bjdd.entity.T_${className};
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import springfox.documentation.annotations.ApiIgnore;
+
+import javax.servlet.http.HttpSession;
+
+@Controller
+@RequestMapping("/page/${pathName}")
+@ApiIgnore
+public class ${className}Page {
+
+    @Autowired
+    private HttpSession httpSession;
+
+    @RequestMapping("/toEdit")
+    public ModelAndView toEdit(Long ${classname}Id, ModelAndView mv){
+
+        mv.addObject("method","edit");
+        mv.addObject("${classname}Id",${classname}Id);
+        mv.setViewName("official/${lcclassname}/${lcclassname}_edit");
+        return mv;
+
+    }
+    @RequestMapping("/toAdd")
+    public ModelAndView toAdd(ModelAndView mv){
+        mv.addObject("method","add");
+        mv.setViewName("official/${lcclassname}/${lcclassname}_edit");
+        return mv;
+
+    }
+
+}

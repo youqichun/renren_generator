@@ -1,0 +1,23 @@
+package com.bjdd.repository;
+
+import com.bjdd.common.repository.BaseRepository;
+import com.bjdd.entity.T_${className};
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+
+import javax.transaction.Transactional;
+import java.util.List;
+
+
+public interface ${className}Repository extends BaseRepository<T_${className}> {
+
+
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM ${tableName} where ${nopretableName}_id} in (?1)",nativeQuery = true)
+    void deleteAllBy${className}IdIn(List<Long> ids);
+
+
+}

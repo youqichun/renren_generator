@@ -1,0 +1,29 @@
+package com.bjdd.service;
+
+import com.bjdd.common.service.BaseService;
+import com.bjdd.common.util.A;
+import com.bjdd.entity.T_${className};
+import com.bjdd.repository.${className}Repository;
+import com.bjdd.util.FileUtil;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+@Service("${classname}")
+public class ${className}Service  extends BaseService<T_${className}> {
+
+    @Autowired
+    private ${className}Repository ${classname}Repository;
+
+
+
+    public void deleteAllBy${className}IdIn(List<Long> ids){
+            ${classname}Repository.deleteAllBy${className}IdIn(ids);
+    }
+
+
+
+}

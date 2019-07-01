@@ -1,0 +1,86 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ include file="/webpage/include/taglib.jsp"%>
+<html>
+<head>
+	<title>${classname}管理</title>
+	<meta name="decorator" content="ani"/>
+
+	<script type="text/javascript">
+		var validateForm;
+		var $table; // 父页面table表格id
+		var $topIndex;//弹出窗口的 index
+		function doSubmit(table, index){//回调函数，在编辑和保存动作时，供openDialog调用提交表单。
+		  if(validateForm.form()){
+			  $table = table;
+			  $topIndex = index;
+			  jp.loading();
+			  $("#inputForm").submit();
+			  return true;
+		  }
+	
+		  return false;
+		}
+		
+		$(document).ready(function(){
+			$("#name").focus();
+
+
+			validateForm= $("#inputForm").validate({
+				<%--rules: {--%>
+					<%--name: {remote: "${ctx}/sys/role/checkName?oldName=" + encodeURIComponent("${role.name}")},//设置了远程验证，在初始化时必须预先调用一次。--%>
+					<%--enname: {remote: "${ctx}/sys/role/checkEnname?oldEnname=" + encodeURIComponent("${role.enname}")}--%>
+				<%--},--%>
+				<%--messages: {--%>
+					<%--name: {remote: "角色名已存在"},--%>
+					<%--enname: {remote: "英文名已存在"}--%>
+				<%--},--%>
+				submitHandler: function(form){
+				    console.log($('#inputForm').serialize())
+					jp.post("${ctx}/ecshop/${classname}/save",$('#inputForm').serialize(),function(data){
+						if(data.success){
+	                    	$table.bootstrapTable('refresh');
+	                    	jp.success(data.msg);
+            	  			
+	                    }else{
+            	  			jp.error(data.msg);
+	                    }
+	                    
+	                    jp.close($topIndex);//关闭dialog
+					})
+				},
+				errorContainer: "#messageBox",
+				errorPlacement: function(error, element) {
+					$("#messageBox").text("输入有误，请先更正。");
+					if (element.is(":checkbox")||element.is(":radio")||element.parent().is(".input-append")){
+						error.appendTo(element.parent().parent());
+					} else {
+						error.insertAfter(element);
+					}
+				}
+			});
+		});
+
+	</script>
+</head>
+<body class="bg-white">
+	<form:form id="inputForm" modelAttribute="${classname}" autocomplete="off" action="${ctx}/ecshop/${classname}/save" method="post" class="form-horizontal" >
+		<form:hidden path="id"/>
+		<sys:message content="${message}"/>
+		<table class="table table-bordered  table-condensed dataTables-example dataTable no-footer">
+		   <tbody>
+		   #foreach ($column in $columns)
+			#if(${column.attrname} !=  'id' && ${column.attrname} != 'createBy' && ${column.attrname} != 'createByName' && ${column.attrname} != 'createDate' && ${column.attrname} != 'updateBy' && ${column.attrname} != 'updateByName' && ${column.attrname} != 'updateDate' && ${column.attrname} != 'remarks' && ${column.attrname} != 'delFlag' && ${column.attrname} != 'ext1' && ${column.attrname} != 'ext2'&& ${column.attrname} != 'ext3')
+			  <tr>
+				  <td  class="width-15 active" class="active"><label class="pull-right"><font color="red">*</font>${column.comments}:</label></td>
+				  <td class="width-35"><input id="${column.attrname}"   type="hidden" value="${${classname}.${column.attrname}}">
+					  <form:input path="${column.attrname}" htmlEscape="false" maxlength="50" class="form-control required"/></td>
+		      </tr>
+		    #end
+		  #end
+
+			</tbody>
+			</table>
+			<%--<form:hidden path="menuIds"/>--%>
+	</form:form>
+</body>
+</html>

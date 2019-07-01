@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${package}.ecshop.mapper.${className}Mapper">
+    
+    <resultMap id="${classname}Result" type="${className}">
+		<id property="id" column="id" />
+		#foreach ($column in $columns)
+			#if(${column.attrname} != 'createBy' && ${column.attrname} != 'createByName'  && ${column.attrname} != 'updateBy' && ${column.attrname} != 'updateByName' && ${column.attrname} != 'updateDate' && ${column.attrname} != 'remarks' && ${column.attrname} != 'delFlag' && ${column.attrname} != 'ext1' && ${column.attrname} != 'ext2'&& ${column.attrname} != 'ext3')
+                <result property="${column.attrname}" column="${column.attrname}" />
+
+			#end
+		#end
+
+	</resultMap>
+	
+    <sql id="${classname}Columns">
+		#foreach ($column in $columns)
+			#if(${column.attrname} != 'createBy' && ${column.attrname} != 'createByName'  && ${column.attrname} != 'updateBy' && ${column.attrname} != 'updateByName' && ${column.attrname} != 'updateDate' && ${column.attrname} != 'remarks' && ${column.attrname} != 'delFlag' && ${column.attrname} != 'ext1' && ${column.attrname} != 'ext2'&& ${column.attrname} != 'ext3')
+				a.${column.columnName},
+			#end
+		#end
+    	a.create_by AS "createBy.id",
+		a.create_date,
+		a.update_by AS "updateBy.id",
+		a.update_date,
+		a.update_by_name,
+		a.create_by_name,
+		a.del_flag
+    </sql>
+    
+	<select id="get" resultMap="${classname}Result">
+		SELECT
+			<include refid="${classname}Columns"/>
+		FROM ${tableName} a
+		WHERE a.id = #{id}
+	</select>
+	
+
+	<select id="findList" resultMap="${classname}Result">
+		SELECT <!-- DISTINCT -->
+			<include refid="${classname}Columns"/>
+		FROM ${tableName} a
+		<!-- 数据范围过滤 -->
+		WHERE 1 = 1 and a.del_flag = #{DEL_FLAG_NORMAL}
+		#foreach ($column in $columns)
+			#if(${column.attrname} != 'createBy' && ${column.attrname} != 'createByName' && ${column.attrname} != 'createDate' && ${column.attrname} != 'updateBy' && ${column.attrname} != 'updateByName' && ${column.attrname} != 'updateDate' && ${column.attrname} != 'remarks' && ${column.attrname} != 'delFlag' && ${column.attrname} != 'ext1' && ${column.attrname} != 'ext2'&& ${column.attrname} != 'ext3')
+
+                <if test="${column.attrname} != null and ${column.attrname} != ''">
+                    AND a.${column.columnName} = #{${column.attrname}}
+                </if>
+			#end
+		#end
+        ORDER BY a.create_date DESC
+
+	</select>
+
+
+
+	<update id="delete">
+		DELETE FROM ${tableName}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="deleteByLogic">
+		UPDATE ${tableName} SET
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+    <insert id="insert">
+        INSERT INTO ${tableName}
+        (
+		#foreach ($column in $columns)
+			#if(${column.attrname} != 'createBy' && ${column.attrname} != 'createByName' && ${column.attrname} != 'createDate' && ${column.attrname} != 'updateBy' && ${column.attrname} != 'updateByName' && ${column.attrname} != 'updateDate' && ${column.attrname} != 'remarks' && ${column.attrname} != 'delFlag' && ${column.attrname} != 'ext1' && ${column.attrname} != 'ext2'&& ${column.attrname} != 'ext3')
+				${column.columnName},
+			#end
+		#end
+        remarks,
+        create_by,
+        create_date,
+        update_by,
+        update_date,
+        update_by_name,
+        create_by_name,
+        del_flag
+        ) VALUES (
+        #foreach ($column in $columns)
+		    #if(${column.attrname} != 'createBy' && ${column.attrname} != 'createByName' && ${column.attrname} != 'createDate' && ${column.attrname} != 'updateBy' && ${column.attrname} != 'updateByName' && ${column.attrname} != 'updateDate' && ${column.attrname} != 'remarks' && ${column.attrname} != 'delFlag' && ${column.attrname} != 'ext1' && ${column.attrname} != 'ext2'&& ${column.attrname} != 'ext3')
+				 #{${column.attrname}},
+			#end
+		#end
+        #{remarks},
+        #{createBy.id},
+        #{createDate},
+        #{updateBy.id},
+        #{updateDate},
+        #{updateByName},
+        #{createByName},
+        #{delFlag}
+        )
+    </insert>
+
+    <update id="update">
+		UPDATE ${tableName} SET
+		 #foreach ($column in $columns)
+			#if(${column.attrname} != 'createBy' && ${column.attrname} != 'createByName' && ${column.attrname} != 'createDate' && ${column.attrname} != 'updateBy' && ${column.attrname} != 'updateByName' && ${column.attrname} != 'updateDate' && ${column.attrname} != 'remarks' && ${column.attrname} != 'delFlag' && ${column.attrname} != 'ext1' && ${column.attrname} != 'ext2'&& ${column.attrname} != 'ext3')
+				${column.columnName} = #{${column.attrname}},
+			#end
+		 #end
+			update_by = #{updateBy.id},
+			update_by_name = #{updateByName},
+			update_date = #{updateDate},
+			del_flag = #{delFlag}
+
+		WHERE id = #{id}
+	</update>
+
+
+	
+</mapper>

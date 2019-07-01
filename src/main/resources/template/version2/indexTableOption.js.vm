@@ -1,0 +1,39 @@
+import {
+    DIC
+} from '@/const/dic'
+export const tableOption = {
+    border: true,
+    index: true,
+    stripe: true,
+    menuAlign: 'center',
+    align: 'center',
+    addBtn: false,
+    editBtn: false,
+    delBtn: false,
+    column: [
+      #foreach($column in $columns)
+        #if($column.columnName != $pk.columnName)
+            {
+                label: '${column.comments}',
+                prop: '${column.attrname}',
+                align: 'center'
+            },
+        #end
+      #end
+    ]
+}
+
+export const formOption = {
+    submitText: '生成',
+    column: [
+      #foreach($column in $columns)
+        #if($column.columnName != $pk.columnName)
+            {
+                label: '${column.comments}',
+                prop: '${column.attrname}',
+                placeholder: ''
+            },
+        #end
+      #end
+    ]
+}

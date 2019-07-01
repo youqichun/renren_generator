@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.springframework.org/schema/jdbc">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>H+ 后台主题UI框架 - 基本表单</title>
+    <meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico"> <link href="/hplus/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="/hplus/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="/hplus/css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="/hplus/css/animate.css" rel="stylesheet">
+    <link href="/hplus/css/style.css?v=4.1.0" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeInRight">
+
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+
+
+                        <form method="" id="form" class="form-horizontal">
+                            <input type="hidden" name="${classname}Id" value="" id="${classname}Id" class="form-control">
+                        #foreach($column in $columns)
+                            #if($column.columnName != $pk.columnName)
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">${column.comments}</label>
+
+                                    <div class="col-sm-10">
+                                        <input type="text" id="${column.attrname}"  required=""  name="${column.attrname}" class="form-control required">
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                            #end
+                        #end
+
+                            <div class="form-group ">
+                                <div class="col-sm-4">
+                                    <div class="center-block" style="width: 140px;">
+                                        <button class="btn btn-primary" onclick="saveButton()" type="button">保存</button>
+                                        <button class="btn btn-white" onclick="closeButton()" type="button">取消</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- 全局js -->
+    <script src="/hplus/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/hplus/js/bootstrap.min.js?v=3.3.6"></script>
+
+    <!-- 自定义js -->
+    <script src="/hplus/js/content.js?v=1.0.0"></script>
+
+    <!-- iCheck -->
+    <script src="/hplus/js/plugins/iCheck/icheck.min.js"></script>
+
+    <script src="/hplus/js/plugins/layer/layer.min.js"></script>
+
+    <!-- jQuery Validation plugin javascript-->
+    <script src="/hplus/js/plugins/validate/jquery.validate.min.js"></script>
+    <script src="/hplus/js/plugins/validate/messages_zh.min.js"></script>
+
+
+    <script  th:inline="javascript">
+        /*<![CDATA[*/
+
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+
+
+
+        });
+        var met = [[${method}]];
+        console.log("met:"+met);
+        if(met=='edit'){
+            var ${classname}Id = [[${${classname}Id}]];
+            get${className}(${classname}Id);
+        }
+
+        function closeButton() {
+            closeLayer();
+        }
+
+        function closeLayer() {
+            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            parent.layer.close(index); //再执行关闭
+        }
+
+
+
+
+
+        function get${className}(${classname}Id) {
+
+            $.ajax({
+                url: '/${pathName}/'+${classname}Id,
+                type: 'GET',
+                contentType: "application/json",
+                success: function(data) {
+                    // Do something with the result
+                    console.log(data);
+
+                    #foreach($column in $columns)
+                            $('#${column.attrname}').val(data.result.${column.attrname});
+                    #end
+
+
+
+                }
+            });
+        }
+
+        function saveButton() {
+
+
+
+
+            var validate = $("#form").valid();
+            console.log(validate);
+            if(validate==false){
+                return false;
+            }
+
+
+            var ${classname} = {
+                #foreach($column in $columns)
+                        ${column.attrname}:$('#${column.attrname}').val(),
+                #end
+
+            }
+
+            console.log(met);
+            if(met=='edit'){
+                console.log(${classname});
+                edit(${classname});
+            }
+            else if(met=='add'){
+                add(${classname});
+            }
+
+        }
+
+        function edit(${classname}) {
+
+            $.ajax({
+                url: '/${pathName}/'+${classname}.${classname}Id,
+                type: 'PUT',
+                data:JSON.stringify(${classname}),
+                contentType: "application/json",
+                success: function(result) {
+                    // Do something with the result
+                    parent.refrechTable();
+                    closeLayer();
+
+                }
+            });
+        }
+        function add(${classname}) {
+            $.ajax({
+                url: '/${pathName}',
+                type: 'POST',
+                data:JSON.stringify(${classname}),
+                contentType: "application/json",
+                success: function(result) {
+                    // Do something with the result
+                    parent.refrechTable();
+                    closeLayer();
+                }
+            });
+        }
+
+
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
+    <!--统计代码，可删除-->
+
+</body>
+
+</html>
